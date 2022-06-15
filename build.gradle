@@ -1,0 +1,59 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.micronaut.application") version "3.4.1"
+}
+
+version = "0.1"
+group = "coop.tecso"
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://gitlab.tecso.coop/api/v4/projects/538/packages/maven"
+        credentials(HttpHeaderCredentials) {
+            name = 'Deploy-Token'
+            value = '7K-PsohyHztP14hdm_L6'
+        }
+        authentication {
+            header(HttpHeaderAuthentication)
+        }
+    }
+}
+
+dependencies {
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut:micronaut-http-validation")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-jackson-databind")
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    implementation("io.micronaut:micronaut-validation")
+
+    testImplementation "org.testcontainers:testcontainers:1.17.2"
+    // Implementacion DB (Dockerizada)
+    testImplementation 'org.testcontainers:postgresql:1.17.2'
+
+}
+
+
+application {
+    mainClass.set("coop.tecso.Application")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("coop.tecso.*")
+    }
+}
+
+
+
